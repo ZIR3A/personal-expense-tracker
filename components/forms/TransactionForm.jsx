@@ -8,7 +8,7 @@ import { DollarSign, Calendar, Tag, FileText } from 'lucide-react';
 import { motion } from 'framer-motion';
 import { GlassCard, GlassCardContent } from '../../components/ui/GlassCard';
 import { GlassButton } from '../../components/ui/GlassButton';
-import { GlassInput, GlassSelect, GlassTextarea } from '../../components/ui/GlassInput';
+import { GlassInput, GlassSelect, GlassTextarea, GlassCheckbox } from '../../components/ui/GlassInput';
 import { CATEGORIES, formatCurrency, formatDate } from '../../lib/utils';
 import { config } from '../../lib/config';
 import { useTransactionStore } from '../../lib/store-transaction';
@@ -170,17 +170,11 @@ export function TransactionForm({ onDelete }) {
         {...register('description')}
       />
 
-      <div className="flex items-center gap-3">
-        <input
-          type="checkbox"
-          id="recurring"
-          {...register('recurring')}
-          className="w-4 h-4 rounded border-white/20 bg-white/5 text-cyan-500 focus:ring-cyan-500/50"
-        />
-        <label htmlFor="recurring" className="text-sm text-white/60">
-          Recurring transaction
-        </label>
-      </div>
+      <GlassCheckbox
+        id="recurring"
+        label="Recurring transaction"
+        {...register('recurring')}
+      />
 
       <div className="flex gap-3 pt-2">
         {isEditing && (

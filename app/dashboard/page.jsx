@@ -3,8 +3,8 @@
 import { useEffect } from 'react';
 import { useRouter } from 'next/navigation';
 import { motion } from 'framer-motion';
-import { PlusCircle, Download, TrendingUp, TrendingDown } from 'lucide-react';
-import { GlassCard, GlassCardContent } from '../../components/ui/GlassCard';
+import { PlusCircle, Download } from 'lucide-react';
+import { GlassCard } from '../../components/ui/GlassCard';
 import { GlassButton } from '../../components/ui/GlassButton';
 import { StatsOverview } from '../../components/ui/StatsOverview';
 import { FilterBar } from '../../components/ui/FilterBar';
@@ -17,23 +17,25 @@ import { Navbar } from '../../components/ui/Navbar';
 import { useAuthStore } from '../../lib/store-auth';
 import { useTransactionStore } from '../../lib/store-transaction';
 import { useUIStore } from '../../lib/store-ui';
+import { useReducedMotion, getPageTransition } from '../../components/ui/motion';
 import { formatCurrency } from '../../lib/utils';
-import { config } from '../../lib/config';
 
 export default function DashboardPage() {
   const router = useRouter();
   const { isAuthenticated, refreshUser } = useAuthStore();
-  const { stats, fetchStats, transactions, fetchTransactions, deleteTransaction, isLoading: isDeleting } = useTransactionStore();
+  const { stats, fetchStats, fetchTransactions, deleteTransaction, isLoading } = useTransactionStore();
   const { isAddModalOpen, isExportModalOpen, openAddModal, closeAddModal, openExportModal, closeExportModal, editingTransaction, closeEditModal, addToast } = useUIStore();
+  const prefersReducedMotion = useReducedMotion();
+  const pageTransition = getPageTransition(prefersReducedMotion);
 
   const handleDeleteFromForm = async () => {
     if (!editingTransaction) return;
     const result = await deleteTransaction(editingTransaction.id);
     if (result.success) {
       closeEditModal();
-      addToast({ type: 'success', message: 'Transaction deleted' });
+      addToast({ type: 'success', message: 'Transaction deleted successfully' });
     } else {
-      addToast({ type: 'error', message: result.error || 'Failed to delete' });
+      addToast({ type: 'error', message: result.error || 'Failed to delete transaction. Please try again.' });
     }
   };
 
@@ -56,11 +58,12 @@ export default function DashboardPage() {
       <Scene />
       <Navbar />
 
-      <main className="container max-w-7xl mx-auto pt-24 px-4 xl:px-0">
+      <main 
+        className="container max-w-7xl mx-auto pt-24 px-4 xl:px-0"
+        id="main-content"
+      >
         <motion.div
-          initial={{ opacity: 0, y: 20 }}
-          animate={{ opacity: 1, y: 0 }}
-          transition={{ duration: 0.5 }}
+          {...pageTransition}
         >
           <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
             <div>
@@ -68,17 +71,27 @@ export default function DashboardPage() {
               <p className="text-white/60 text-sm mt-1">Track your finances</p>
             </div>
             <div className="flex gap-3">
-              <GlassButton variant="secondary" icon={Download} onClick={openExportModal}>
+              <GlassButton 
+                variant="secondary" 
+                icon={Download} 
+                onClick={openExportModal}
+                ariaLabel="Export transactions"
+              >
                 Export
               </GlassButton>
-              <GlassButton variant="primary" icon={PlusCircle} onClick={openAddModal}>
+              <GlassButton 
+                variant="primary" 
+                icon={PlusCircle} 
+                onClick={openAddModal}
+                ariaLabel="Add new transaction"
+              >
                 Add Transaction
               </GlassButton>
             </div>
           </div>
 
           <div className="mb-8">
-            <StatsOverview stats={stats} />
+            <StatsOverview stats={stats} isLoading={isLoading} />
           </div>
 
           <div className="grid lg:grid-cols-3 gap-8">
@@ -91,26 +104,26 @@ export default function DashboardPage() {
               <GlassCard noPadding>
                 <div className="p-4 sm:p-6">
                   <h3 className="font-semibold text-white mb-4">Quick Stats</h3>
-                  <div className="space-y-4">
-                    <div className="flex items-center justify-between">
-                      <span className="text-white/60 text-sm">This Month</span>
+                  <div className="space-y-4" role="list" aria-label="Monthly statistics">
+                    <div className="flex items-center justify-between" role="listitem">
+                      <span className="text-white/60 text-sm">Monthly Income</span>
                       <span className="text-emerald-400 font-medium">
                         {formatCurrency(stats?.monthlyIncome || 0)}
                       </span>
                     </div>
-                    <div className="flex items-center justify-between">
-                      <span className="text-white/60 text-sm">This Month</span>
+                    <div className="flex items-center justify-between" role="listitem">
+                      <span className="text-white/60 text-sm">Monthly Expenses</span>
                       <span className="text-rose-400 font-medium">
                         {formatCurrency(stats?.monthlyExpenses || 0)}
                       </span>
                     </div>
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between" role="listitem">
                       <span className="text-white/60 text-sm">Transactions</span>
                       <span className="text-white font-medium">
                         {stats?.transactionsThisMonth || 0}
                       </span>
                     </div>
-                    <div className="flex items-center justify-between">
+                    <div className="flex items-center justify-between" role="listitem">
                       <span className="text-white/60 text-sm">Top Category</span>
                       <span className="text-cyan-400 font-medium capitalize">
                         {stats?.topCategory?.replace('_', ' ') || 'N/A'}
@@ -124,7 +137,7 @@ export default function DashboardPage() {
                 <GlassCard noPadding>
                   <div className="p-4 sm:p-6">
                     <h3 className="font-semibold text-white mb-4">Spending by Category</h3>
-                    <div className="space-y-3">
+                    <div className="space-y-3" role="list" aria-label="Spending breakdown by category">
                       {stats.byCategory.slice(0, 5).map((item) => (
                         <div key={item.category}>
                           <div className="flex items-center justify-between mb-1">
@@ -135,9 +148,16 @@ export default function DashboardPage() {
                               {formatCurrency(item.total)}
                             </span>
                           </div>
-                          <div className="h-1.5 rounded-full bg-white/10 overflow-hidden">
+                          <div 
+                            className="h-1.5 rounded-full bg-white/10 overflow-hidden"
+                            role="progressbar"
+                            aria-valuenow={Math.round((item.total / (stats?.monthlyExpenses || 1)) * 100)}
+                            aria-valuemin={0}
+                            aria-valuemax={100}
+                            aria-label={`${item.category.replace('_', ' ')}: ${formatCurrency(item.total)}`}
+                          >
                             <div
-                              className="h-full rounded-full bg-gradient-to-r from-rose-500 to-rose-400"
+                              className="h-full rounded-full bg-gradient-to-r from-rose-500 to-rose-400 transition-all duration-500"
                               style={{
                                 width: `${Math.min((item.total / (stats?.monthlyExpenses || 1)) * 100, 100)}%`
                               }}
@@ -159,6 +179,7 @@ export default function DashboardPage() {
         onClose={closeAddModal}
         title={editingTransaction ? "Edit Transaction" : "Add Transaction"}
         size="md"
+        ariaLabel={editingTransaction ? "Edit transaction dialog" : "Add transaction dialog"}
       >
         <TransactionForm onDelete={handleDeleteFromForm} />
       </GlassModal>
