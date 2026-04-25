@@ -1,6 +1,6 @@
 import { NextResponse } from 'next/server';
-import { authenticate } from '../../lib/auth';
-import { storage } from '../../lib/storage';
+import { authenticate } from '../../../lib/auth';
+import { storage } from '../../../lib/storage';
 
 export async function PUT(request, { params }) {
   const authResult = await authenticate(request);
