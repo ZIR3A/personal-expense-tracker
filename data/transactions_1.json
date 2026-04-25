@@ -1,0 +1,22 @@
+[
+  {
+    "id": "241bee6f-d0ac-411b-a74c-f886c6d07853",
+    "amount": 2000,
+    "description": "",
+    "category": "salary",
+    "date": "2026-04-25",
+    "type": "income",
+    "recurring": false,
+    "createdAt": "2026-04-25T09:08:36.221Z"
+  },
+  {
+    "id": "b21d03cf-46cc-4eac-8434-8f85d990058e",
+    "amount": 200,
+    "description": "qwewq",
+    "category": "bills",
+    "date": "2026-04-25",
+    "type": "expense",
+    "recurring": false,
+    "createdAt": "2026-04-25T09:08:47.467Z"
+  }
+]
