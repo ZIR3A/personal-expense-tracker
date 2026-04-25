@@ -26,9 +26,8 @@ export default function SettingsPage() {
       router.push('/login');
       return;
     }
-    refreshUser();
     fetchBudgets();
-  }, [isAuthenticated, router, refreshUser, fetchBudgets]);
+  }, [isAuthenticated, router, fetchBudgets]);
 
   useEffect(() => {
     setLocalBudgets(budgets);

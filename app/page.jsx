@@ -23,7 +23,7 @@ export default function HomePage() {
       <div className="relative z-10">
         <div className="flex items-center gap-3">
           <div className="w-10 h-10 rounded-xl gradient-primary flex items-center justify-center animate-pulse">
-            <span className="text-white font-bold">FT</span>
+            <span className="text-white font-bold">NS</span>
           </div>
         </div>
       </div>

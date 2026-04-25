@@ -38,9 +38,8 @@ export default function TransactionsPage() {
       router.push('/login');
       return;
     }
-    refreshUser();
     fetchTransactions();
-  }, [isAuthenticated, router, refreshUser, fetchTransactions]);
+  }, [isAuthenticated, router, fetchTransactions]);
 
   if (!isAuthenticated) {
     return null;

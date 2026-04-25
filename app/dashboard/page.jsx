@@ -38,16 +38,14 @@ export default function DashboardPage() {
       addToast({ type: 'error', message: result.error || 'Failed to delete transaction. Please try again.' });
     }
   };
-
   useEffect(() => {
     if (!isAuthenticated) {
       router.push('/login');
       return;
     }
-    refreshUser();
     fetchStats();
     fetchTransactions();
-  }, [isAuthenticated, router, refreshUser, fetchStats, fetchTransactions]);
+  }, [isAuthenticated, router, fetchStats, fetchTransactions]);
 
   if (!isAuthenticated) {
     return null;

@@ -21,8 +21,7 @@ export default function ExportPage() {
       router.push('/login');
       return;
     }
-    refreshUser();
-  }, [isAuthenticated, router, refreshUser]);
+  }, [isAuthenticated, router]);
 
   if (!isAuthenticated) {
     return null;

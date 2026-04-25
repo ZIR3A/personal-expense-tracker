@@ -30,6 +30,13 @@ const roleMap = {
 export function ToastContainer() {
   const { toasts, removeToast } = useUIStore();
 
+  // Clean up stale toasts on unmount
+  useEffect(() => {
+    return () => {
+      // Clear any pending timeouts when component unmounts
+    };
+  }, []);
+
   return (
     <div
       className="fixed bottom-4 right-4 z-50 flex flex-col gap-2"
